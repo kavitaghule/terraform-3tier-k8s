@@ -52,3 +52,45 @@ resource "aws_nat_gateway" "nat" {
 resource "aws_eip" "nat" {
   vpc = true
 }
+esource "aws_route_table" "public" {
+  vpc_id = aws_vpc.this.id
+  tags = {
+    Name = "${var.environment}-public-rt"
+  }
+}
+
+resource "aws_route" "public_internet_access" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.this.id
+}
+
+resource "aws_route_table_association" "public" {
+  count          = length(var.azs)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_security_group" "rds" {
+  name        = "${var.environment}-rds-sg"
+  description = "Allow DB traffic from VPC"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.environment}-rds-sg"
+  }
+}

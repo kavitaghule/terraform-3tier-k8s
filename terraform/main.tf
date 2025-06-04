@@ -7,20 +7,20 @@ path = "secret/aws_cred"
 }
 
 module "vpc" {
-  source     = "./modules/vpc"
+  source     = "./module/vpc"
   vpc_cidr   = var.vpc_cidr
   azs        = var.azs
 }
 
 module "eks" {
-  source         = "./modules/eks"
+  source         = "./module/eks"
   cluster_name   = var.cluster_name
   vpc_id         = module.vpc.vpc_id
   private_subnets = module.vpc.private_subnets
 }
 
 module "rds" {
-  source          = "./modules/rds"
+  source          = "./module/rds"
   db_name         = var.db_name
   db_username     = var.db_username
   db_password     = var.db_password
@@ -29,6 +29,6 @@ module "rds" {
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source = "./module/iam"
 }
 

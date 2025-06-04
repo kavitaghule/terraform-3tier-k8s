@@ -32,3 +32,4 @@ resource "aws_security_group" "rds_sg" {
     Name        = "${var.environment}-rds-sg"
     Environment = var.environment
   }
+}

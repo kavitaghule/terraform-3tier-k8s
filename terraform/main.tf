@@ -21,12 +21,15 @@ module "eks" {
 
 module "rds" {
   source          = "./module/rds"
+  environment = var.environment
+  vpc_id      = module.vpc.vpc_id
   db_name         = var.db_name
   db_username     = var.db_username
   db_password     = var.db_password
   private_subnets = module.vpc.private_subnets
   rds_sg          = module.vpc.db_sg_id
 }
+
 
 module "iam" {
   source = "./module/iam"
